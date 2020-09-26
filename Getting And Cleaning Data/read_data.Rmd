@@ -1,0 +1,124 @@
+---
+title: "Reading Files from different Data Types"
+output: html_notebook
+---
+
+The Data Types included are :- 
+1) CSV (Comma Seperated files)
+2) XLSX (Excel Sheets)
+3) XML (Markup Language)
+```{r}
+#------------------------------------------
+# Using CSV to get and read data
+#------------------------------------------
+
+
+#------------------------------------------
+# to Create dir if does not exist
+# if(!file.exists("Data")){
+#  dir.create("Data")
+#}
+#------------------------------------------
+
+
+#Downloading CSV File directly from internet.
+
+fileurl <- "https://data.bloomington.in.gov/dataset/117733fb-31cb-480a-8b30-fbf425a690cd/resource/8673744e-53f2-42d1-9d05-4e412bd55c94/download/monroe-county-crash-data2003-to-2015.csv"
+download.file(fileurl, destfile = "./Data/Traffic.csv")
+dateDownload <- date()
+trafficData <- read.csv("./Data/Traffic.csv",
+                        sep = ",", header = TRUE)
+head(trafficData)
+
+```
+```{r}
+ncol(trafficData)
+nrow(trafficData)
+```
+```{r}
+#Install Package to render xlsx files
+install.packages("xlsx")
+library("xlsx")
+```
+
+```{r}
+#------------------------------------------
+# Using XLSX to get and read data
+#------------------------------------------
+
+
+#------------------------------------------
+# to Create dir if does not exist
+# if(!file.exists("Data")){
+#  dir.create("Data")
+#}
+#------------------------------------------
+```
+
+
+```{r}
+#Downloading XLSX File directly from internet.
+xlsxfile <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FDATA.gov_NGAP.xlsx"
+download.file(xlsxfile, destfile = "./Data/Naturalgas.xlsx", mode = "wb")
+
+```
+```{r}
+dat <- read.xlsx("./Data/Naturalgas.xlsx", sheetIndex = 1, header = TRUE)
+```
+```{r}
+head(dat)
+nrow(dat)
+ncol(dat)
+```
+```{r}
+#------------------------------------------
+# Using XML to get and read data
+#------------------------------------------
+
+
+#------------------------------------------
+# to Create dir if does not exist
+# if(!file.exists("Data")){
+#  dir.create("Data")
+#}
+#------------------------------------------
+
+# install.packages("XML") #case sensitive.
+library("XML")
+xmlfile <- "http://www.w3schools.com/xml/simple.xml"
+download.file(xmlfile, destfile = "./Data/Simple.xml")
+doc <- xmlTreeParse("./Data/Simple.xml", useInternal = TRUE)
+rootnode <- xmlRoot(doc)
+xmlName(rootnode)
+
+#------------------------------------------
+# I had to download file and then parse it intead.
+# this is due to the "https" protocol which prevented me from doing so 
+# Other method is to use "RCurl" library.
+# library(XML)
+# library(RCurl)
+# fileURL <- "http://www.w3schools.com/xml/simple.xml"
+# xData <- getURL(fileURL)
+#doc <- xmlParse(xData)
+```
+```{r}
+names(rootnode)
+```
+```{r}
+rootnode[[1]]
+# First Element of the root document
+```
+```{r}
+rootnode[[5]][[1]]
+# 1st element(attribute) of the 5th root element
+```
+```{r}
+a <- xpathSApply(rootnode, "//name", xmlValue)
+b <- xpathSApply(rootnode, "//price", xmlValue)
+c  <- cbind(a,b)
+
+# Rendering prices for the dishes as presented. 
+c
+```
+
+
